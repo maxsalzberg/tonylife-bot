@@ -17,6 +17,6 @@ module.exports = {
     await interaction.reply({ content: `Текущие моды:\n\`\`\`\n${modsList}\n\`\`\``, ephemeral: true });
 
     // Отправляем отчёт в ЛС с информацией о пользователе и списке модов
-    await sendCommandNotification(interaction.client, interaction.user.tag, 'list-mods', modsList);
+    // await sendCommandNotification(interaction.client, interaction.user.tag, 'list-mods', modsList);
   }
 };

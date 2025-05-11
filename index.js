@@ -2,7 +2,6 @@ require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
 const { Client, Collection, GatewayIntentBits, Partials, Events } = require('discord.js');
-const { sendCommandNotification } = require('./utils/notifications');  // Импортируем нашу функцию уведомлений
 const client = new Client({
   intents: [GatewayIntentBits.Guilds, GatewayIntentBits.DirectMessages],
   partials: [Partials.Channel]
@@ -10,6 +9,7 @@ const client = new Client({
 
 client.commands = new Collection();
 
+// Загрузка команд
 const commandsPath = path.join(__dirname, 'commands');
 const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
 for (const file of commandFiles) {
@@ -19,6 +19,33 @@ for (const file of commandFiles) {
 
 client.once(Events.ClientReady, () => {
   console.log(`Logged in as ${client.user.tag}`);
+});
+
+client.on(Events.InteractionCreate, async interaction => {
+  if (!interaction.isChatInputCommand()) return;
+
+  const command = client.commands.get(interaction.commandName);
+  if (!command) return;
+
+  const { allowedRoleId } = require('./config.json');
+  const member = interaction.member;
+
+  // Проверка на роль пользователя
+  if (
+    interaction.guild &&
+    !member.roles.cache.has(allowedRoleId)
+  ) {
+    return interaction.reply({ content: 'У вас нет доступа к этой команде.', ephemeral: true });
+  }
+
+  try {
+    // Выполнение команды
+    await command.execute(interaction);
+
+  } catch (error) {
+    console.error(error);
+    await interaction.reply({ content: 'Произошла ошибка при выполнении команды.', ephemeral: true });
+  }
 });
 
 client.login(process.env.TOKEN);

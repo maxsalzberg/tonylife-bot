@@ -13,7 +13,7 @@ services:
       - RCONPORT=21114
       - FIXEDMAXPLAYERS=100
       - FIXEDMAXTICKRATE=64
-      - MODS=(3294562930)
+      - MODS=()
 
 volumes:
   squad_data:
