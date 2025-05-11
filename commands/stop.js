@@ -1,16 +1,22 @@
 const { SlashCommandBuilder } = require('discord.js');
-const { runCommand } = require('../utils/docker');
+const { exec } = require('child_process');
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('stop')
-    .setDescription('Остановить Docker Compose'),
+    .setDescription('Остановить сервер'),
+
   async execute(interaction) {
-    try {
-      const output = await runCommand('docker compose down');
-      await interaction.reply({ content: `Сервер остановлен:\n\`\`\`\n${output}\n\`\`\``, ephemeral: true });
-    } catch (e) {
-      await interaction.reply({ content: `Ошибка:\n\`\`\`\n${e}\n\`\`\``, ephemeral: true });
-    }
+    // Увеличиваем время ожидания Discord
+    await interaction.deferReply({ ephemeral: true });
+
+    exec('docker compose -f /home/squadserver/docker-compose.yml down', (error, stdout, stderr) => {
+      if (error) {
+        console.error(`Ошибка при остановке сервера: ${error.message}`);
+        return interaction.editReply({ content: 'Произошла ошибка при остановке сервера.' });
+      }
+
+      interaction.editReply({ content: 'Сервер успешно остановлен.' });
+    });
   }
 };
