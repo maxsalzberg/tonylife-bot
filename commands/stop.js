@@ -4,44 +4,38 @@ const { exec } = require('child_process');
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('stop')
-    .setDescription('Остановить сервер'),
+    .setDescription('Stop the server'),
 
   async execute(interaction) {
-    // Увеличиваем время ожидания Discord
     await interaction.deferReply({ ephemeral: true });
 
-    // Сначала проверим статус контейнера
     exec('docker ps -q -f name=north-server', (error, stdout, stderr) => {
       if (error) {
-        console.error(`Ошибка при проверке статуса контейнера: ${error.message}`);
-        return interaction.editReply({ content: 'Не удалось проверить статус контейнера.' });
+        console.error(`Error checking container status: ${error.message}`);
+        return interaction.editReply({ content: 'Failed to check container status.' });
       }
 
       if (!stdout) {
-        return interaction.editReply({ content: 'Контейнер уже остановлен.' });
+        return interaction.editReply({ content: 'Server is already stopped.' });
       }
 
-      // Выполним остановку сервера
       exec('docker compose -f /home/squadserver/docker-compose.yml down', (error, stdout, stderr) => {
         if (error) {
-          console.error(`Ошибка при остановке сервера: ${error.message}`);
+          console.error(`Error stopping server: ${error.message}`);
           console.error(`stderr: ${stderr}`);
-          return interaction.editReply({ content: 'Произошла ошибка при остановке сервера.' });
+          return interaction.editReply({ content: 'Error occurred while stopping the server.' });
         }
 
-        // Проверяем, что контейнер остановился
         exec('docker ps -q -f name=north-server', (error, stdout, stderr) => {
           if (error) {
-            console.error(`Ошибка при проверке статуса после остановки: ${error.message}`);
-            return interaction.editReply({ content: 'Не удалось проверить статус контейнера.' });
+            console.error(`Error checking container status after stop: ${error.message}`);
+            return interaction.editReply({ content: 'Failed to verify container status.' });
           }
 
           if (!stdout) {
-            // Контейнер успешно остановлен
-            interaction.editReply({ content: 'Сервер успешно остановлен.' });
+            interaction.editReply({ content: 'Server stopped successfully.' });
           } else {
-            // Контейнер всё ещё работает
-            interaction.editReply({ content: 'Не удалось остановить сервер. Попробуйте еще раз.' });
+            interaction.editReply({ content: 'Failed to stop the server. Please try again.' });
           }
         });
       });

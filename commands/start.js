@@ -4,45 +4,38 @@ const { exec } = require('child_process');
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('start')
-    .setDescription('Запустить сервер'),
+    .setDescription('Start the server'),
 
   async execute(interaction) {
-    // Увеличиваем время ожидания Discord
-    await interaction.deferReply({ flags: 64 }); // Используем flags вместо ephemeral
+    await interaction.deferReply({ flags: 64 });
 
-    // Проверяем, работает ли уже контейнер
     exec('docker ps -q -f name=north-server', (error, stdout, stderr) => {
       if (error) {
-        console.error(`Ошибка при проверке статуса контейнера: ${error.message}`);
-        return interaction.editReply({ content: 'Не удалось проверить статус контейнера.' });
+        console.error(`Error checking container status: ${error.message}`);
+        return interaction.editReply({ content: 'Failed to check container status.' });
       }
 
       if (stdout) {
-        // Контейнер уже работает
-        return interaction.editReply({ content: 'Сервер уже запущен.' });
+        return interaction.editReply({ content: 'Server is already running.' });
       }
 
-      // Запускаем сервер
       exec('docker compose -f /home/squadserver/docker-compose.yml up -d', (error, stdout, stderr) => {
         if (error) {
-          console.error(`Ошибка при запуске сервера: ${error.message}`);
+          console.error(`Error starting server: ${error.message}`);
           console.error(`stderr: ${stderr}`);
-          return interaction.editReply({ content: 'Произошла ошибка при запуске сервера.' });
+          return interaction.editReply({ content: 'Error occurred while starting the server.' });
         }
 
-        // Проверяем, что контейнер запустился
         exec('docker ps -q -f name=north-server', (error, stdout, stderr) => {
           if (error) {
-            console.error(`Ошибка при проверке статуса после запуска: ${error.message}`);
-            return interaction.editReply({ content: 'Не удалось проверить статус контейнера.' });
+            console.error(`Error checking container status after start: ${error.message}`);
+            return interaction.editReply({ content: 'Failed to verify container status.' });
           }
 
           if (stdout) {
-            // Контейнер успешно запущен
-            interaction.editReply({ content: 'Сервер успешно запущен.' });
+            interaction.editReply({ content: 'Server started successfully.' });
           } else {
-            // Контейнер всё ещё не запущен
-            interaction.editReply({ content: 'Не удалось запустить сервер. Попробуйте еще раз.' });
+            interaction.editReply({ content: 'Failed to start the server. Please try again.' });
           }
         });
       });

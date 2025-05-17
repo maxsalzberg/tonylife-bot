@@ -4,14 +4,15 @@ const { writeMods } = require('../utils/mods');
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('update-mods')
-    .setDescription('Обновить список модов')
+    .setDescription('Update the list of mods')
     .addStringOption(option =>
       option.setName('mods')
-        .setDescription('Новые моды, разделённые пробелами')
+        .setDescription('New mods, separated by spaces')
         .setRequired(true)),
+  
   async execute(interaction) {
     const mods = interaction.options.getString('mods').trim().split(/\s+/);
     writeMods(mods);
-    await interaction.reply({ content: 'Список модов обновлён.', ephemeral: true });
+    await interaction.reply({ content: 'Mod list has been updated.', ephemeral: true });
   }
 };

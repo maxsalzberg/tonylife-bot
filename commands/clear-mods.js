@@ -4,12 +4,10 @@ const { writeMods } = require('../utils/mods');
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('clear-mods')
-    .setDescription('Очистить список модов'),
+    .setDescription('Clear the list of mods'),
   
   async execute(interaction) {
-    // Передаем пустой массив, чтобы очистить список модов
     writeMods([]);
-    
-    await interaction.reply({ content: 'Список модов очищен.', ephemeral: true });
+    await interaction.reply({ content: 'Mod list has been cleared.', ephemeral: true });
   }
 };

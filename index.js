@@ -9,7 +9,6 @@ const client = new Client({
 
 client.commands = new Collection();
 
-// Загрузка команд
 const commandsPath = path.join(__dirname, 'commands');
 const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
 for (const file of commandFiles) {
@@ -30,21 +29,20 @@ client.on(Events.InteractionCreate, async interaction => {
   const { allowedRoleId } = require('./config.json');
   const member = interaction.member;
 
-  // Проверка на роль пользователя
   if (
     interaction.guild &&
     !member.roles.cache.has(allowedRoleId)
   ) {
-    return interaction.reply({ content: 'У вас нет доступа к этой команде.', ephemeral: true });
+    return interaction.reply({ content: 'You do not have access to this command.', ephemeral: true });
   }
 
   try {
-    // Выполнение команды
+ 
     await command.execute(interaction);
 
   } catch (error) {
     console.error(error);
-    await interaction.reply({ content: 'Произошла ошибка при выполнении команды.', ephemeral: true });
+    await interaction.reply({ content: 'An error occurred while executing the command.', ephemeral: true });
   }
 });
 

@@ -16,12 +16,12 @@ const rest = new REST({ version: '10' }).setToken(process.env.TOKEN);
 
 (async () => {
   try {
-    console.log('Обновление команд...');
+    console.log('Updating commands...');
     await rest.put(
       Routes.applicationGuildCommands(process.env.CLIENT_ID, process.env.GUILD_ID),
       { body: commands }
     );
-    console.log('Команды успешно обновлены.');
+    console.log('Commands successfully updated.');
   } catch (error) {
     console.error(error);
   }

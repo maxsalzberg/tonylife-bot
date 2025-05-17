@@ -1,24 +1,23 @@
-// utils/notifications.js
-const { Client } = require('discord.js');
+// const { Client } = require('discord.js');
 
-/**
- * Отправка уведомлений владельцу бота о выполнении команды.
- * @param {Client} client - Экземпляр клиента Discord.
- * @param {string} userTag - Тег пользователя, который использовал команду.
- * @param {string} commandName - Имя использованной команды.
- * @param {string} result - Результат выполнения команды.
- */
-async function sendCommandNotification(client, userTag, commandName, result) {
-  try {
-    const { ownerId } = require('../config.json');
-    const user = await client.users.fetch(ownerId);
+// /**
+//  * Send a notification to the bot owner about a command execution.
+//  * @param {Client} client - Discord client instance.
+//  * @param {string} userTag - The tag of the user who executed the command.
+//  * @param {string} commandName - The name of the executed command.
+//  * @param {string} result - The result of the command execution.
+//  */
+// async function sendCommandNotification(client, userTag, commandName, result) {
+//   try {
+//     const { ownerId } = require('../config.json');
+//     const user = await client.users.fetch(ownerId);
 
-    const message = `**${userTag}** использовал команду \`/${commandName}\`\nРезультат:\n\`\`\`\n${result}\n\`\`\``;
+//     const message = `**${userTag}** used the command \`/${commandName}\`\nResult:\n\`\`\`\n${result}\n\`\`\``;
     
-    await user.send(message);
-  } catch (error) {
-    console.error('Ошибка при отправке уведомления о команде:', error);
-  }
-}
+//     await user.send(message);
+//   } catch (error) {
+//     console.error('Error sending command notification:', error);
+//   }
+// }
 
-module.exports = { sendCommandNotification };
+// module.exports = { sendCommandNotification };
