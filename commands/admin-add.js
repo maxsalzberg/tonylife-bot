@@ -1,6 +1,6 @@
 const fs = require("fs");
 const path = require("path");
-const { addAdmin, removeAdmin } = require("./admins");
+const { addAdmin, removeAdmin } = require("../utils/admins");
 
 const filePath = path.join(__dirname, "admins.cfg");
 
